@@ -38,7 +38,7 @@ const SplashScreen = () => {
 
   return (
     <div className={splashClasses}>
-      <h1 className="splash-text">i-Catalogo</h1>
+      <h1 className="splash-text">starter-Node24</h1>
       <MonitorSmartphone size={100} className="splash-icon" />
     </div>
   );

@@ -40,7 +40,7 @@ function App() {
         <header className="app-header">
           <Link to="/" className="header-logo-link" aria-label="Ir a la página de inicio">
             <MonitorSmartphone className="header-splash-icon" />
-            <h1 className="header-splash-text">i-Catalogo</h1>
+            <h1 className="header-splash-text">Starter-Node24</h1>
           </Link>
           <div className="header-actions">
             <button
