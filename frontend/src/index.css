@@ -341,11 +341,17 @@ footer {
   padding: 0.5rem;
   border-radius: 50%;
   color: var(--header-text);
-  transition: background-color 0.2s ease-in-out;
+  transition: background-color 0.2s ease-in-out, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .header-icon-link:hover {
   background-color: rgba(128, 128, 128, 0.2);
+}
+
+/* Estado activo para el botón del menú (rotación al abrir) */
+.header-icon-link.menu-active {
+  transform: rotate(90deg);
+  background-color: rgba(128, 128, 128, 0.1);
 }
 
 /* --- ESTILOS PARA MENÚ DE PERFIL --- */

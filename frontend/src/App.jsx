@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { userSignout } from "./slices/userSlice"; // 1. Importar la nueva acción desde el slice
 import SplashScreen from "./components/SplashScreen";
 import ProfileMenu from "./components/ProfileMenu";
-import { Sun, Moon, ShieldUser, MonitorSmartphone, Instagram, Facebook, Mail, HelpCircle, Menu } from "lucide-react";
+import { Sun, Moon, ShieldUser, MonitorSmartphone, Instagram, Facebook, Mail, HelpCircle, Menu, X } from "lucide-react";
 import wassapIcon from "./assets/whatsapp.svg";
 
 //version del 22 de Diciembre de 2025 para enviar a Rony para comercializar
@@ -73,12 +73,12 @@ function App() {
             ) : (
               <div className="profile-menu-container" ref={guestMenuRef}>
                 <button
-                  className="header-icon-link"
+                  className={`header-icon-link ${isGuestMenuOpen ? "menu-active" : ""}`}
                   onClick={() => setIsGuestMenuOpen(!isGuestMenuOpen)}
-                  aria-label="Menú"
+                  aria-label={isGuestMenuOpen ? "Cerrar menú" : "Abrir menú"}
                   style={{ background: "transparent", border: "none", cursor: "pointer" }}
                 >
-                  <Menu />
+                  {isGuestMenuOpen ? <X /> : <Menu />}
                 </button>
                 <div className={`profile-menu ${isGuestMenuOpen ? "open" : ""}`}>
                   <Link to="/signin" onClick={() => setIsGuestMenuOpen(false)}>
