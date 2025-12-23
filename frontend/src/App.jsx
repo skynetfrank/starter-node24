@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, Outlet } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { userSignout } from "./slices/userSlice"; // 1. Importar la nueva acción desde el slice
@@ -12,6 +12,7 @@ import wassapIcon from "./assets/whatsapp.svg";
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
   const [isGuestMenuOpen, setIsGuestMenuOpen] = useState(false);
+  const guestMenuRef = useRef(null);
   const userSignin = useSelector((state) => state.userSignin);
   const isSplashVisible = useSelector((state) => state.splash.isVisible);
   const { userInfo } = userSignin;
@@ -21,6 +22,21 @@ function App() {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (guestMenuRef.current && !guestMenuRef.current.contains(event.target)) {
+        setIsGuestMenuOpen(false);
+      }
+    };
+
+    if (isGuestMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isGuestMenuOpen]);
 
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
@@ -55,7 +71,7 @@ function App() {
             {userInfo ? (
               <ProfileMenu userInfo={userInfo} onSignout={signoutHandler} />
             ) : (
-              <div className="profile-menu-container">
+              <div className="profile-menu-container" ref={guestMenuRef}>
                 <button
                   className="header-icon-link"
                   onClick={() => setIsGuestMenuOpen(!isGuestMenuOpen)}
