@@ -39,6 +39,18 @@ export default function RegisterScreen() {
   const submitHandler = async (e) => {
     e.preventDefault();
 
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      },
+    });
+
     // Validamos la cédula antes de continuar
     const cedulaError = validateCedula(cedula);
     if (cedulaError) {
@@ -56,25 +68,20 @@ export default function RegisterScreen() {
       const userData = await registerUser({ nombre, apellido, email, cedula, password, telefono }).unwrap(); // .unwrap() para manejar el catch
       dispatch(signinAction(userData));
 
-      Swal.fire({
+      Toast.fire({
         icon: "success",
         title: "¡Registro exitoso!",
-        text: "Serás redirigido.",
-        timer: 2000,
-        showConfirmButton: false,
-      }).then(() => {
-        navigate(redirect);
       });
+      navigate(redirect);
     } catch (err) {
       console.error("Fallo al registrar:", err);
       let errorMessage = err.data?.message || "Ocurrió un error al registrar la cuenta.";
       if (errorMessage.includes("duplicate key") || errorMessage.includes("E11000")) {
         errorMessage = "El correo electrónico que ingresaste ya está en uso. Por favor, intenta con otro.";
       }
-      Swal.fire({
+      Toast.fire({
         icon: "error",
-        title: "Error",
-        text: errorMessage,
+        title: errorMessage,
       });
     }
   };

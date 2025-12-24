@@ -46,6 +46,18 @@ export default function ProfileScreen() {
   const submitHandler = async (e) => {
     e.preventDefault();
 
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      },
+    });
+
     const cedulaError = validateCedula(cedula);
     if (cedulaError) {
       setMessage(cedulaError);
@@ -71,17 +83,15 @@ export default function ProfileScreen() {
         // 4. Actualizar el estado global con los nuevos datos del usuario y el token
         dispatch(signinAction(updatedUserData));
 
-        Swal.fire({
+        Toast.fire({
           icon: "success",
           title: "Perfil actualizado",
-          text: "Tu información ha sido guardada correctamente.",
         });
       } catch (err) {
         console.error("Fallo al actualizar el perfil:", err);
-        Swal.fire({
+        Toast.fire({
           icon: "error",
-          title: "Error",
-          text: err?.data?.message || "Fallo al actualizar el perfil.",
+          title: err?.data?.message || "Fallo al actualizar el perfil.",
         });
       }
     }
