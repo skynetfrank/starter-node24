@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router";
 import { useSigninUserMutation } from "../api/usersApi";
 import Button from "../components/Button";
 import { userSignin as signinAction } from "../slices/userSlice";
-import useApiNotification from "../hooks/useApiNotification"; // 1. Importar el hook de notificación
+import Swal from "sweetalert2";
 import { Mail, Lock, LogIn, Eye, EyeOff } from "lucide-react";
 
 export default function SigninScreen() {
@@ -26,25 +26,6 @@ export default function SigninScreen() {
   // Obtenemos userInfo del estado global para saber si ya hay una sesión
   const { userInfo } = useSelector((state) => state.userSignin);
 
-  // 3. Instanciar el hook de notificaciones
-  useApiNotification(
-    mutationState,
-    {
-      loading: "Iniciando sesión...",
-      success: "¡Bienvenido Administrador!",
-      error: (err) => err?.data?.message || "Ocurrió un error al iniciar sesión.",
-    },
-    () => navigate(redirect), // 4. Callback para redirigir en caso de éxito
-    // 5. Opciones adicionales para las notificaciones
-    {
-      success: {
-        timer: 1000, // La alerta se cerrará después de 2 segundos
-        timerProgressBar: true, // Muestra una barra de progreso
-        showConfirmButton: false, // Oculta el botón "OK"
-      },
-    }
-  );
-
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
@@ -55,10 +36,22 @@ export default function SigninScreen() {
       const userData = await signinUser({ email: sanitizedEmail, password }).unwrap();
       // 5. Si el login es exitoso, despachamos la acción para guardar los datos en el store
       dispatch(signinAction(userData));
-      // La redirección ahora es manejada por el callback onSuccess del hook
+
+      Swal.fire({
+        icon: "success",
+        title: "¡Bienvenido Administrador!",
+        showConfirmButton: false,
+        timer: 1500,
+      }).then(() => {
+        navigate(redirect);
+      });
     } catch (err) {
-      // La notificación de error es manejada por el hook useApiNotification
       console.error("Failed to sign in:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: err?.data?.message || "Ocurrió un error al iniciar sesión.",
+      });
     }
   };
 

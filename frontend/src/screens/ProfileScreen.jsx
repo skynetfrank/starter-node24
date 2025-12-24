@@ -4,7 +4,7 @@ import { useGetUserQuery, useUpdateUserProfileMutation } from "../api/usersApi";
 import { userSignin as signinAction, userSignout } from "../slices/userSlice";
 import Button from "../components/Button";
 import { User, Mail, Lock, Eye, EyeOff, Fingerprint, Phone, Save, LogOut } from "lucide-react";
-import useApiNotification from "../hooks/useApiNotification"; // 1. Importamos el nuevo hook
+import Swal from "sweetalert2";
 import useCedulaValidation from "../hooks/useCedulaValidation";
 
 export default function ProfileScreen() {
@@ -29,13 +29,6 @@ export default function ProfileScreen() {
   // 2. Usar RTK Query para la mutación de actualización de perfil
   const [updateProfile, mutationState] = useUpdateUserProfileMutation();
   const { isLoading: loadingUpdate, error: errorUpdate } = mutationState;
-
-  // 3. Instanciar el hook de notificaciones
-  useApiNotification(mutationState, {
-    loading: "Actualizando perfil...",
-    success: "Tu información ha sido guardada correctamente.",
-    error: "Fallo al actualizar el perfil.",
-  });
 
   useEffect(() => {
     // Rellenar el formulario cuando los datos del usuario se cargan desde la API
@@ -77,9 +70,19 @@ export default function ProfileScreen() {
 
         // 4. Actualizar el estado global con los nuevos datos del usuario y el token
         dispatch(signinAction(updatedUserData));
+
+        Swal.fire({
+          icon: "success",
+          title: "Perfil actualizado",
+          text: "Tu información ha sido guardada correctamente.",
+        });
       } catch (err) {
-        // El error ya es manejado por el hook useApiNotification
         console.error("Fallo al actualizar el perfil:", err);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: err?.data?.message || "Fallo al actualizar el perfil.",
+        });
       }
     }
   };

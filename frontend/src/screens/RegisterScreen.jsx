@@ -5,7 +5,7 @@ import { useRegisterUserMutation } from "../api/usersApi";
 import Button from "../components/Button";
 import { userSignin as signinAction } from "../slices/userSlice";
 import useCedulaValidation from "../hooks/useCedulaValidation"; // Importamos el hook
-import useApiNotification from "../hooks/useApiNotification"; // 1. Importamos el hook de notificación
+import Swal from "sweetalert2";
 import { User, Mail, Lock, Eye, EyeOff, LogIn, Phone, Fingerprint } from "lucide-react";
 
 export default function RegisterScreen() {
@@ -36,23 +36,6 @@ export default function RegisterScreen() {
   // 2. Obtener userInfo para redirigir si el usuario ya está logueado
   const { userInfo } = useSelector((state) => state.userSignin);
 
-  // 3. Instanciar el hook de notificaciones
-  useApiNotification(
-    mutationState,
-    {
-      loading: "Creando tu cuenta...",
-      success: "¡Registro exitoso! Serás redirigido.",
-      error: (err) => {
-        const errorMessage = err.data?.message || "";
-        if (errorMessage.includes("duplicate key") || errorMessage.includes("E11000")) {
-          return "El correo electrónico que ingresaste ya está en uso. Por favor, intenta con otro.";
-        }
-        return "Ocurrió un error al registrar la cuenta.";
-      },
-    },
-    () => navigate(redirect) // 4. Callback onSuccess para redirigir
-  );
-
   const submitHandler = async (e) => {
     e.preventDefault();
 
@@ -72,9 +55,27 @@ export default function RegisterScreen() {
       // 5. Llamar a la mutación y despachar la acción
       const userData = await registerUser({ nombre, apellido, email, cedula, password, telefono }).unwrap(); // .unwrap() para manejar el catch
       dispatch(signinAction(userData));
+
+      Swal.fire({
+        icon: "success",
+        title: "¡Registro exitoso!",
+        text: "Serás redirigido.",
+        timer: 2000,
+        showConfirmButton: false,
+      }).then(() => {
+        navigate(redirect);
+      });
     } catch (err) {
-      // El error ya es manejado por el hook useApiNotification
       console.error("Fallo al registrar:", err);
+      let errorMessage = err.data?.message || "Ocurrió un error al registrar la cuenta.";
+      if (errorMessage.includes("duplicate key") || errorMessage.includes("E11000")) {
+        errorMessage = "El correo electrónico que ingresaste ya está en uso. Por favor, intenta con otro.";
+      }
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: errorMessage,
+      });
     }
   };
 
