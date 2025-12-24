@@ -48,6 +48,10 @@ export default function RegisterScreen() {
       didOpen: (toast) => {
         toast.onmouseenter = Swal.stopTimer;
         toast.onmouseleave = Swal.resumeTimer;
+        const progressBar = toast.querySelector(".swal2-timer-progress-bar");
+        if (progressBar) {
+          progressBar.style.backgroundColor = "var(--primary, #007bff)";
+        }
       },
     });
 
