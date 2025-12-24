@@ -43,20 +43,20 @@ export default function ProfileScreen() {
 
   const validateCedula = useCedulaValidation();
 
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    },
+  });
+
   const submitHandler = async (e) => {
     e.preventDefault();
-
-    const Toast = Swal.mixin({
-      toast: true,
-      position: "top-end",
-      showConfirmButton: false,
-      timer: 3000,
-      timerProgressBar: true,
-      didOpen: (toast) => {
-        toast.onmouseenter = Swal.stopTimer;
-        toast.onmouseleave = Swal.resumeTimer;
-      },
-    });
 
     const cedulaError = validateCedula(cedula);
     if (cedulaError) {
@@ -99,6 +99,10 @@ export default function ProfileScreen() {
 
   const signoutHandler = () => {
     dispatch(userSignout());
+    Toast.fire({
+      icon: "success",
+      title: "Sesión cerrada correctamente",
+    });
   };
 
   return (

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { userSignout } from "./slices/userSlice"; // 1. Importar la nueva acción desde el slice
 import SplashScreen from "./components/SplashScreen";
 import ProfileMenu from "./components/ProfileMenu";
+import Swal from "sweetalert2";
 import { Sun, Moon, ShieldUser, MonitorSmartphone, Instagram, Facebook, Mail, HelpCircle, Menu, X } from "lucide-react";
 import wassapIcon from "./assets/whatsapp.svg";
 
@@ -43,7 +44,24 @@ function App() {
   };
 
   const signoutHandler = () => {
-    dispatch(userSignout()); // 2. Despachar la acción correcta
+    dispatch(userSignout());
+
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      },
+    });
+
+    Toast.fire({
+      icon: "success",
+      title: "Sesión cerrada correctamente",
+    });
   };
 
   if (isSplashVisible) {
