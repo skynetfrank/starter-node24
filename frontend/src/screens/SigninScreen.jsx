@@ -28,6 +28,19 @@ export default function SigninScreen() {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+
+    const Toast = Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      },
+    });
+
     try {
       // Sanitización básica en el frontend:
       // - Eliminar espacios en blanco al inicio y al final del email.
@@ -37,20 +50,16 @@ export default function SigninScreen() {
       // 5. Si el login es exitoso, despachamos la acción para guardar los datos en el store
       dispatch(signinAction(userData));
 
-      Swal.fire({
+      Toast.fire({
         icon: "success",
         title: "¡Bienvenido Administrador!",
-        showConfirmButton: false,
-        timer: 1500,
-      }).then(() => {
-        navigate(redirect);
       });
+      navigate(redirect);
     } catch (err) {
       console.error("Failed to sign in:", err);
-      Swal.fire({
+      Toast.fire({
         icon: "error",
-        title: "Error",
-        text: err?.data?.message || "Ocurrió un error al iniciar sesión.",
+        title: err?.data?.message || "Ocurrió un error al iniciar sesión.",
       });
     }
   };
